@@ -1,6 +1,7 @@
 const FAVICON_SIZE = 64;
-const FAVICON_BORDER_RADIUS = 5;
+const FAVICON_BORDER_RADIUS = 12;
 
+const favicon = document.querySelector('link[rel="icon"]');
 const canvas = document.querySelector('canvas');
 const context = canvas.getContext('2d');
 
@@ -39,6 +40,9 @@ function getSquareCenterBounds(image) {
 }
 
 function createFavicon({foreground, background, size, borderRadius}) {
+    canvas.width = size;
+    canvas.height = size;
+
     drawRoundedClip(size, borderRadius);
     const bgCenter = getSquareCenterBounds(background);
     const fgCenter = getSquareCenterBounds(foreground);
@@ -54,16 +58,20 @@ function createFavicon({foreground, background, size, borderRadius}) {
         fgCenter.x, fgCenter.y, fgCenter.width, fgCenter.height,
         0, 0, size, size
     );
+
+    return canvas.toDataURL('image/png');
 }
 
 Promise.all([
     loadImage('/icon.png'),
     loadImage('/background.jpg')
 ]).then(([icon, background]) => {
-    createFavicon({
+    const image = createFavicon({
         foreground: icon,
         background,
         size: FAVICON_SIZE,
         borderRadius: FAVICON_BORDER_RADIUS
     });
+
+    favicon.href = image;
 });
