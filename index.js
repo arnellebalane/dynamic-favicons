@@ -1,4 +1,5 @@
-const FAVICON_SIZE = 32;
+const FAVICON_SIZE = 64;
+const FAVICON_BORDER_RADIUS = 5;
 
 const canvas = document.querySelector('canvas');
 const context = canvas.getContext('2d');
@@ -37,22 +38,32 @@ function getSquareCenterBounds(image) {
     };
 }
 
+function createFavicon({foreground, background, size, borderRadius}) {
+    drawRoundedClip(size, borderRadius);
+    const bgCenter = getSquareCenterBounds(background);
+    const fgCenter = getSquareCenterBounds(foreground);
+
+    context.drawImage(
+        background,
+        bgCenter.x, bgCenter.y, bgCenter.width, bgCenter.height,
+        0, 0, size, size
+    );
+
+    context.drawImage(
+        foreground,
+        fgCenter.x, fgCenter.y, fgCenter.width, fgCenter.height,
+        0, 0, size, size
+    );
+}
+
 Promise.all([
     loadImage('/icon.png'),
     loadImage('/background.jpg')
 ]).then(([icon, background]) => {
-    drawRoundedClip(FAVICON_SIZE, 5);
-    const center = getSquareCenterBounds(background);
-
-    context.drawImage(
+    createFavicon({
+        foreground: icon,
         background,
-        center.x, center.y, center.width, center.height,
-        0, 0, FAVICON_SIZE, FAVICON_SIZE
-    );
-
-    context.drawImage(
-        icon,
-        0, 0, icon.width, icon.height,
-        0, 0, FAVICON_SIZE, FAVICON_SIZE
-    );
+        size: FAVICON_SIZE,
+        borderRadius: FAVICON_BORDER_RADIUS
+    });
 });
