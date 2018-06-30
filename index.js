@@ -106,4 +106,10 @@ function selectBackground(url) {
     displayBackgrounds(backgrounds);
 
     selectBackground(backgrounds[0].url);
+
+    container.addEventListener('click', e => {
+        if (e.target.matches('img')) {
+            selectBackground(e.target.getAttribute('src'));
+        }
+    });
 })();
