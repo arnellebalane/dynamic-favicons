@@ -11,3 +11,35 @@ body {
     font-size: 16px;
     background-color: #111;
 }
+
+canvas {
+    position: absolute;
+    top: -100vh;
+    opacity: 0.01;
+}
+
+.backgrounds {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 10px;
+}
+
+.backgrounds img {
+    --row-items: 5;
+    --item-spacing: 10px;
+    --item-size: calc(
+        (100vw -
+            (var(--item-spacing) * 2
+            * (var(--row-items) + 1))
+        ) / var(--row-items)
+    );
+
+    display: block;
+    width: var(--item-size);
+    height: var(--item-size);
+    object-fit: cover;
+    object-position: center center;
+    margin: var(--item-spacing);
+    border-radius: 8px;
+}

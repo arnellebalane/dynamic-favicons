@@ -1,5 +1,6 @@
 const FAVICON_SIZE = 64;
 const FAVICON_BORDER_RADIUS = 12;
+const BACKGROUNDS_URL = '/data.json';
 
 const favicon = document.querySelector('link[rel="icon"]');
 const container = document.querySelector('.backgrounds');
@@ -8,6 +9,7 @@ const context = canvas.getContext('2d');
 
 function loadImage(url) {
     const image = new Image();
+    image.crossOrigin = 'anonymous';
     image.src = url;
 
     return new Promise(resolve => {
@@ -63,10 +65,22 @@ function createFavicon({foreground, background, size, borderRadius}) {
     return canvas.toDataURL('image/png');
 }
 
+function fetchBackgrounds() {
+    return fetch(BACKGROUNDS_URL).then(response => response.json());
+}
+
+function displayBackgrounds(backgrounds) {
+    backgrounds.forEach(background => {
+        const image = new Image();
+        image.src = background.urls.regular;
+        container.appendChild(image);
+    });
+}
+
 function selectBackground(url) {
     Promise.all([
         loadImage('/icon.png'),
-        loadImage('/background.jpg')
+        loadImage(url)
     ]).then(([icon, background]) => {
         favicon.href = createFavicon({
             foreground: icon,
@@ -77,4 +91,9 @@ function selectBackground(url) {
     });
 }
 
-selectBackground('/background.png');
+(async () => {
+    const backgrounds = await fetchBackgrounds();
+    displayBackgrounds(backgrounds);
+
+    selectBackground(backgrounds[0].urls.regular);
+})();
