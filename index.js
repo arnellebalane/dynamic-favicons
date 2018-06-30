@@ -73,11 +73,21 @@ function displayBackgrounds(backgrounds) {
     backgrounds.forEach(background => {
         const image = new Image();
         image.src = background.urls.regular;
-        container.appendChild(image);
+
+        const wrapper = document.createElement('div');
+        wrapper.appendChild(image);
+
+        container.appendChild(wrapper);
     });
 }
 
 function selectBackground(url) {
+    const selected = container.querySelector('.selected')
+    if (selected) {
+        selected.classList.remove('selected');
+    }
+    container.querySelector(`img[src="${url}"]`).parentNode.classList.add('selected');
+
     Promise.all([
         loadImage('/icon.png'),
         loadImage(url)
