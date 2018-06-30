@@ -72,7 +72,7 @@ function fetchBackgrounds() {
 function displayBackgrounds(backgrounds) {
     backgrounds.forEach(background => {
         const image = new Image();
-        image.src = background.urls.regular;
+        image.src = background.url;
 
         const wrapper = document.createElement('div');
         wrapper.appendChild(image);
@@ -105,5 +105,5 @@ function selectBackground(url) {
     const backgrounds = await fetchBackgrounds();
     displayBackgrounds(backgrounds);
 
-    selectBackground(backgrounds[0].urls.regular);
+    selectBackground(backgrounds[0].url);
 })();
