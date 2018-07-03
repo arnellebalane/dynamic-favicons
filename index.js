@@ -5,6 +5,9 @@ const BACKGROUNDS_URL = '/data.json';
 const favicon = document.querySelector('link[rel="icon"]');
 const container = document.querySelector('.backgrounds');
 
+const context = getCanvasContext();
+const worker = new Worker('worker.js');
+
 function getCanvasContext() {
     const canvas = document.createElement('canvas');
     canvas.width = FAVICON_SIZE;
@@ -53,8 +56,6 @@ async function createFaviconLocally({foreground, background, size, borderRadius}
         loadImage(background)
     ]);
 
-    const context = getCanvasContext();
-
     drawRoundedClip(context, size, borderRadius);
     const bgCenter = getSquareCenterBounds(background);
     const fgCenter = getSquareCenterBounds(foreground);
@@ -75,7 +76,6 @@ async function createFaviconLocally({foreground, background, size, borderRadius}
 }
 
 function createFaviconInWorker(options) {
-    const worker = new Worker('worker.js');
     worker.postMessage(options);
 
     return new Promise(resolve => {
