@@ -4,7 +4,6 @@ const BACKGROUNDS_URL = '/data.json';
 
 const favicon = document.querySelector('link[rel="icon"]');
 const container = document.querySelector('.backgrounds');
-const context = getCanvasContext();
 
 function getCanvasContext() {
     const canvas = document.createElement('canvas');
@@ -23,7 +22,7 @@ function loadImage(url) {
     });
 }
 
-function drawRoundedClip(size, radius) {
+function drawRoundedClip(context, size, radius) {
     context.beginPath();
     context.moveTo(radius, 0);
     context.lineTo(size - radius, 0);
@@ -48,8 +47,10 @@ function getSquareCenterBounds(image) {
     };
 }
 
-function createFavicon({foreground, background, size, borderRadius}) {
-    drawRoundedClip(size, borderRadius);
+function createFaviconLocally({foreground, background, size, borderRadius}) {
+    const context = getCanvasContext();
+
+    drawRoundedClip(context, size, borderRadius);
     const bgCenter = getSquareCenterBounds(background);
     const fgCenter = getSquareCenterBounds(foreground);
 
@@ -66,6 +67,10 @@ function createFavicon({foreground, background, size, borderRadius}) {
     );
 
     return context.canvas.toDataURL('image/png');
+}
+
+function createFavicon(...args) {
+    return createFaviconLocally(...args);
 }
 
 function fetchBackgrounds() {
