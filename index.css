@@ -7,8 +7,9 @@
 
 body {
     min-height: 100vh;
-    font-family: sans-serif;
+    font-family: "Open Sans", sans-serif;
     font-size: 16px;
+    font-weight: 300;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     color: #fff;
@@ -25,8 +26,10 @@ header {
     text-align: center;
 }
 
-header a {
-    font-size: 14px;
+header h1 {
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 8px;
 }
 
 canvas {
