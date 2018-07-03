@@ -3,14 +3,10 @@ addEventListener('message', async e => {
     postMessage(favicon);
 });
 
-function loadImage(url) {
-    const image = new Image();
-    image.crossOrigin = 'anonymous';
-    image.src = url;
-
-    return new Promise(resolve => {
-        image.onload = () => resolve(image);
-    });
+async function loadImage(url) {
+    const blob = await fetch(url).then(response => response.blob());
+    const image = createImageBitmap(blob);
+    return Promise.resolve(image);
 }
 
 function drawRoundedClip(context, size, radius) {
