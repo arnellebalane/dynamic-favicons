@@ -47,7 +47,12 @@ function getSquareCenterBounds(image) {
     };
 }
 
-function createFaviconLocally({foreground, background, size, borderRadius}) {
+async function createFaviconLocally({foreground, background, size, borderRadius}) {
+    [foreground, background] = await Promise.all([
+        loadImage(foreground),
+        loadImage(background)
+    ]);
+
     const context = getCanvasContext();
 
     drawRoundedClip(context, size, borderRadius);
@@ -69,8 +74,21 @@ function createFaviconLocally({foreground, background, size, borderRadius}) {
     return context.canvas.toDataURL('image/png');
 }
 
+function createFaviconInWorker(options) {
+    const worker = new Worker('worker.js');
+    worker.postMessage(options);
+
+    return new Promise(resolve => {
+        worker.addEventListener('message', e => {
+            resolve(e.data);
+        }, {once: true});
+    });
+}
+
 function createFavicon(...args) {
-    return createFaviconLocally(...args);
+    return window.OffscreenCanvas
+        ? createFaviconInWorker(...args)
+        : createFaviconLocally(...args);
 }
 
 function fetchBackgrounds() {
@@ -89,23 +107,18 @@ function displayBackgrounds(backgrounds) {
     });
 }
 
-function selectBackground(url) {
+async function selectBackground(url) {
     const selected = container.querySelector('.selected')
     if (selected) {
         selected.classList.remove('selected');
     }
     container.querySelector(`img[src="${url}"]`).parentNode.classList.add('selected');
 
-    Promise.all([
-        loadImage('/icon.png'),
-        loadImage(url)
-    ]).then(([icon, background]) => {
-        favicon.href = createFavicon({
-            foreground: icon,
-            background,
-            size: FAVICON_SIZE,
-            borderRadius: FAVICON_BORDER_RADIUS
-        });
+    favicon.href = await createFavicon({
+        foreground: '/icon.png',
+        background: url,
+        size: FAVICON_SIZE,
+        borderRadius: FAVICON_BORDER_RADIUS
     });
 }
 
